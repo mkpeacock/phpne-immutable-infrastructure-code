@@ -1,0 +1,30 @@
+---
+- name: "Install web server"
+  package:
+    name: "{{ web.package }}"
+    state: present
+
+- name: "Install PHP"
+  package:
+    name: "php-fpm"
+    state: present
+
+- name: "Copy nginx configuration"
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/sites-available/default
+  notify: restart webserver
+
+- name: "Start Web Service"
+  service:
+    name: "{{ web.service }}"
+    state: started
+    enabled: yes
+
+- name: "Copy application code"
+  copy:
+      src: "http/"
+      dest: "/var/www/html/"
+      owner: www-data
+      group: www-data
+      mode: 0655
